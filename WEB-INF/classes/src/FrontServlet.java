@@ -1,6 +1,4 @@
 package etu001982.framework.servlet;
-import etu001982.framework.*;
-import etu001982.framework.myAnnotations.*;
 import java.io.*;
 import java.util.HashMap;
 
@@ -14,10 +12,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 public class FrontServlet extends HttpServlet{
-    HashMap<String,Mapping> MappingUrls;
+     static HashMap<String,etu001982.framework.Mapping> MappingUrls;
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         processRequest(req,res);
     }
@@ -30,7 +27,7 @@ public class FrontServlet extends HttpServlet{
         out.println("null");
         try {
 ///HashMap
-            for (Map.Entry<String, Mapping> entry : MappingUrls.entrySet()) {
+            for (Map.Entry<String, etu001982.framework.Mapping> entry : MappingUrls.entrySet()) {
                 out.println("\tAnnotation : \"" + entry.getKey() + "\"");
                 out.println("\tClass:" + entry.getValue().getClassName());
                 out.println("\tMethod:" + entry.getValue().getMethod());
@@ -51,7 +48,7 @@ public class FrontServlet extends HttpServlet{
     /// INIT
     @Override
     public void init() throws ServletException {
-        MappingUrls = new  HashMap<String,Mapping>();
+        MappingUrls = new  HashMap<String,etu001982.framework.Mapping>();
         String path = "etu001982/framework/modele/";
         displayAnnot(MappingUrls,path);
     }
@@ -72,7 +69,7 @@ public class FrontServlet extends HttpServlet{
         return c.toArray(new String[c.size()]);
     }
 //GET ANNOTATION
-    public void displayAnnot( HashMap<String,Mapping> Mapping,String path){
+    public void displayAnnot(HashMap<String,etu001982.framework.Mapping> mapping , String path){
         try {
             String [] classe = this.getEachClass(path);
             for(int i =0 ;i< classe.length; i++){
@@ -82,10 +79,11 @@ public class FrontServlet extends HttpServlet{
                 for (Method method : methods) {
                     Annotation[] url = method.getAnnotations();
                     if(url.length > 0 ){
-                        Url  u = methods[i].getAnnotation(Url.class);
+                        etu001982.framework.myAnnotations.Url  u = methods[i].getAnnotation(etu001982.framework.myAnnotations.Url.class);
                         System.out.println(u.toString());
-                        MappingUrls.put(u.name(),new Mapping(classe[i],method.getName()));
-                      // System.out.println(u.name()+" / "+classe[i]+" / "+methods[i].getName());
+                        mapping = new HashMap<String,etu001982.framework.Mapping>();            
+                        mapping.put(u.name(),new etu001982.framework.Mapping(classe[i],method.getName()));
+                        System.out.println(u.name()+" / "+classe[i]+" / "+methods[i].getName());
                     }
                 }
             }
@@ -95,6 +93,7 @@ public class FrontServlet extends HttpServlet{
     }
     public static void main(String[] args) {
      new FrontServlet().getEachClass("etu001982/framework/modele/");
+     new FrontServlet().displayAnnot(MappingUrls,"etu001982/framework/modele/");
     }
 
 
