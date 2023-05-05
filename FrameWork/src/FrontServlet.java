@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
+
+import etu001982.framework.Modelview.ModelView;
 public class FrontServlet extends HttpServlet{
      static HashMap<String,etu001982.framework.Mapping> MappingUrls;
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -49,7 +51,7 @@ public class FrontServlet extends HttpServlet{
     @Override
     public void init() throws ServletException {
         MappingUrls = new  HashMap<String,etu001982.framework.Mapping>();
-        String path = "etu001982/framework/modele/";
+        String path = "classes/etu001982/framework/modele/";
         displayAnnot(MappingUrls,path);
     }
 //GET CLASS
@@ -73,7 +75,7 @@ public class FrontServlet extends HttpServlet{
         try {
             String [] classe = this.getEachClass(path);
             for(int i =0 ;i< classe.length; i++){
-                String className  = "etu001982.framework.modele." +classe[i];
+                String className  = "classes/etu001982.framework.modele." +classe[i];
                 Class<?> clazz = Class.forName(className);
                 Method [] methods = clazz.getDeclaredMethods();
                 for (Method method : methods) {
@@ -83,6 +85,7 @@ public class FrontServlet extends HttpServlet{
                         System.out.println(u.toString());
                         mapping = new HashMap<String,etu001982.framework.Mapping>();            
                         mapping.put(u.name(),new etu001982.framework.Mapping(classe[i],method.getName()));
+                        ModelView modelView=new ModelView();
                         System.out.println(u.name()+" / "+classe[i]+" / "+methods[i].getName());
                     }
                 }
@@ -92,9 +95,7 @@ public class FrontServlet extends HttpServlet{
         }
     }
     public static void main(String[] args) {
-     new FrontServlet().getEachClass("etu001982/framework/modele/");
-     new FrontServlet().displayAnnot(MappingUrls,"etu001982/framework/modele/");
+     new FrontServlet().getEachClass("classes/etu001982/framework/modele/");
+     new FrontServlet().displayAnnot(MappingUrls,"classes/etu001982/framework/modele/");
     }
-
-
 }
