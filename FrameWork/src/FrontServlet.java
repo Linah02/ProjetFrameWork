@@ -71,29 +71,44 @@ public class FrontServlet extends HttpServlet{
         return c.toArray(new String[c.size()]);
     }
 //GET ANNOTATION
-    public void displayAnnot(HashMap<String,etu001982.framework.Mapping> mapping , String path){
-        try {
-            String [] classe = this.getEachClass(path);
-            for(int i =0 ;i< classe.length; i++){
-                String className  = "classes/etu001982.framework.modele." +classe[i];
-                Class<?> clazz = Class.forName(className);
-                Method [] methods = clazz.getDeclaredMethods();
-                for (Method method : methods) {
-                    Annotation[] url = method.getAnnotations();
-                    if(url.length > 0 ){
-                        etu001982.framework.myAnnotations.Url  u = methods[i].getAnnotation(etu001982.framework.myAnnotations.Url.class);
-                        System.out.println(u.toString());
-                        mapping = new HashMap<String,etu001982.framework.Mapping>();            
-                        mapping.put(u.name(),new etu001982.framework.Mapping(classe[i],method.getName()));
-                        ModelView modelView=new ModelView();
-                        System.out.println(u.name()+" / "+classe[i]+" / "+methods[i].getName());
+public void displayAnnot(HashMap<String, etu001982.framework.Mapping> mapping, String path, HttpServletRequest request, HttpServletResponse response) {
+    try {
+        String[] classe = this.getEachClass(path);
+        for (int i = 0; i < classe.length; i++) {
+            String className = "classes.etu001982.framework.modele." + classe[i];
+            Class<?> clazz = Class.forName(className);
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method method : methods) {
+                Annotation[] annotations = method.getAnnotations();
+                if (annotations.length > 0) {
+                    etu001982.framework.myAnnotations.Url url = method.getAnnotation(etu001982.framework.myAnnotations.Url.class);
+                    System.out.println(url.toString());
+                    mapping = new HashMap<String, etu001982.framework.Mapping>();
+                    mapping.put(url.name(), new etu001982.framework.Mapping(classe[i], method.getName()));
+                    ModelView modelView = (ModelView) method.invoke(clazz.newInstance());
+                    String viewName = modelView.getView();
+                    String jspPath = "/src/view/" + viewName;
+                    ServletContext context = request.getServletContext();
+                    if (context.getResource(jspPath) != null) {
+                        RequestDispatcher dispatcher = request.getRequestDispatcher(jspPath);
+                        dispatcher.forward(request, response);
+                        return;
+                    } else {
+                        response.sendError(HttpServletResponse.SC_NOT_FOUND, "La vue " + viewName + " n'existe pas.");
+                        return;
                     }
                 }
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
+    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException ex) {
+        ex.printStackTrace();
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Une erreur est survenue lors de la recherche de la vue.");
+    } catch (IOException ex) {
+        ex.printStackTrace();
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Une erreur est survenue lors de la redirection vers la vue.");
     }
+}
+
     public static void main(String[] args) {
      new FrontServlet().getEachClass("classes/etu001982/framework/modele/");
      new FrontServlet().displayAnnot(MappingUrls,"classes/etu001982/framework/modele/");
