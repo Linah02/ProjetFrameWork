@@ -23,4 +23,3 @@ copy test\test.war "C:\Program Files (x86)\Apache Software Foundation\Tomcat 10.
 @REM catalina.bat run
 cd C:\Program Files (x86)\Apache Software Foundation\Tomcat 10.0\webapps
 start http://localhost:8080/test
-cd sprint4\
