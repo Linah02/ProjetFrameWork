@@ -14,6 +14,14 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Map.Entry;
+import etu001982.framework.myAnnotations.Url;
+import etu001982.framework.Mapping;
 import etu001982.framework.Modelview.ModelView;
 public class FrontServlet extends HttpServlet{
      static HashMap<String,etu001982.framework.Mapping> MappingUrls;
@@ -40,6 +48,71 @@ public class FrontServlet extends HttpServlet{
                 String host = req.getHeader("Host");
                 requestUrl = requestUrl.split("//")[1].replace(host, "");
                 out.print(requestUrl);
+                
+                requestUrl = requestUrl.split("//")[1].replace(host, "");
+                //out.print(requestUrl);         
+// //HashMap
+           // out.println(MappingUrls.entrySet().isEmpty());
+
+            for (Map.Entry<String, Mapping> entry : MappingUrls.entrySet()) {
+                String key = entry.getKey();
+                Mapping mapping = entry.getValue();
+                // out.println(key);
+                // out.println(mapping);
+                
+                if (key.compareTo(page) == 0) {
+                    
+
+                       // out.print(mapping.getClassName());
+                        Class<?> class1 = Class.forName(packages+"."+mapping.getClassName());
+               // out.print(mapping.getMethod());
+               out.print("n");
+                        
+                        //out.print(packages+"."+mapping.getClassName());
+                  
+                        out.print(key);
+                        out.print("\n");
+                        out.print(page);
+                        out.print("\n");
+
+                        //Object object = class1.newInstance();
+                        Object object = class1.getDeclaredConstructor().newInstance();
+
+               
+
+                        //Object object = class1.newInstance();
+                        Method method = object.getClass().getMethod(mapping.getMethod());
+                         // Itérer sur chaque paire clé-valeur de l'HashMap
+                        // ModelView modelViews = (ModelView) method.invoke(object);
+                         // // Récupérer les valeurs de l'attribut "data" de ModelView
+                        ModelView modelView = (ModelView) method.invoke(object);
+                       // String modelString = "save.jsp"; // Ajouter le préfixe "/" pour indiquer le chemin absolu
+                       HashMap<String, Object> data = modelView.getData();
+             
+                       for (Map.Entry<String, Object> entr : data.entrySet()) {
+                           String ke = entr.getKey();
+                           Object value = entr.getValue();
+
+                           // Ajouter chaque paire clé-valeur à la requête
+                           req.setAttribute(ke, value);
+                       }
+    
+                       String modelString =modelView.getView();
+                        out.print(modelView.getView());
+                        out.print("\n");
+                        out.print(modelString);
+                        out.print("\n");
+        
+                        try {
+                            RequestDispatcher dispatch = req.getRequestDispatcher(modelString);
+                            dispatch.forward(req, res);
+                        } catch (Exception e) {
+                            out.print(e.getMessage());
+                        }
+
+                }
+                
+            }
             } catch (Exception e) {
                 out.print(e.getMessage());
                 e.printStackTrace();
@@ -50,9 +123,15 @@ public class FrontServlet extends HttpServlet{
     /// INIT
     @Override
     public void init() throws ServletException {
-        MappingUrls = new  HashMap<String,etu001982.framework.Mapping>();
-        String path = "classes/etu001982/framework/modele/";
-        displayAnnot(MappingUrls,path);
+        super.init(config);
+        this.packages=getServletConfig().getInitParameter("test");
+         //String path = "WEB-INF/classes/etu001982/framework/modele/";
+         try {
+             this.displayAnnot(packages);
+           
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 //GET CLASS
     public  String [] getEachClass(String path){

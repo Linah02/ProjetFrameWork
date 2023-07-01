@@ -1,5 +1,6 @@
 package etu001982.framework.Modelview;
 public class ModelView {
+    private HashMap<String, Object> data;
     String View;
     private HashMap<String, Object> data;
     public ModelView(String View){

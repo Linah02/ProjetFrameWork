@@ -29,6 +29,19 @@ public class Emp {
         ModelView Modelview=new ModelView(view);
     return Modelview;  
     }
+    @Url(name="sprint6")
+    public ModelView findAlls() {
+        ModelView modelView = new ModelView("view.jsp");
+        
+        // Ajouter des éléments à l'attribut "data"
+        modelView.addItem("2nd prenom", "Yvette");
+        modelView.addItem("prenom", "Linah");
+
+        
+        // Autres opérations de la fonction findAll
+        
+        return modelView;
+    }
 }
 
 
