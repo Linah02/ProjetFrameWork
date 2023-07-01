@@ -28,11 +28,15 @@
     <servlet>
         <servlet-name>Form3</servlet-name>
         <servlet-class>etu001982.framework.servlet.FrontServlet</servlet-class>
+    <init-param>
+      <param-name>test</param-name>
+      <param-value>etu001982.framework.modele</param-value>
+    </init-param>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>Form3</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
     <!-- ............................................................ -->
