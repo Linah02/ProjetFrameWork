@@ -8,18 +8,21 @@
 javac -d FrameWork\src\ FrameWork\src\*.java  
 cd FrameWork\src\
 jar cvf  ..\..\fw.jar *
+@REM java etu001982.framework.servlet.FrontServlet
 cd ..\..\ 
-set classpath=%classpath%;"%cd%"\fw.jar
-echo %classpath%
+ set classpath=%classpath%;"%cd%"\fw.jar
+@REM echo %classpath%
 @REM mkdir test\WEB-INF\lib
-copy FrameWork\src\fw.jar test\WEB-INF\lib
+copy fw.jar test\WEB-INF\lib
+@REM copy save.jsp test
 javac -classpath .\fw.jar -d .\test\WEB-INF\classes .\test\WEB-INF\src\model\*.java  
 cd test\
 jar cvf test.war *                                  
 cd ..\
-copy test\test.war "C:\Program Files (x86)\Apache Software Foundation\Tomcat 10.0\webapps\"
+copy test\test.war "C:\Program Files\Apache Software Foundation\Tomcat 10.0\webapps\"
 @REM demarre tomcat
 @REM cd C:\Program Files (x86)\Apache Software Foundation\Tomcat 10.0\bin
 @REM catalina.bat run
-cd C:\Program Files (x86)\Apache Software Foundation\Tomcat 10.0\webapps
+cd C:\Program Files\Apache Software Foundation\Tomcat 10.0\webapps
 start http://localhost:8080/test
+cd sprint8\
