@@ -4,6 +4,8 @@ import etu001982.framework.Modelview.*;
 public class Emp {
     String nom;
     int age;
+    Date dtn;
+    double salaire;
 /// GETTER & SETTER
     @Url(name = "getNom_Emp")
     public String getNom() {return nom;}
@@ -13,10 +15,19 @@ public class Emp {
     public int getAge() {return age;}
     @Url(name = "setAge_Emp")
     public void setAge(int age) {this.age = age;}
-
-    public Emp(String nom, int age) {
-        this.setNom(nom);
-        this.setAge(age);
+    @Url(name = "getDtn_Emp")
+    public Date getdtn() {return dtn;}
+    @Url(name = "setDtn_Emp")
+    public void setdtn(Date dtn) {this.dtn = dtn;}
+    @Url(name = "getSalaire_Emp")
+    public double getsalaire() {return salaire;}
+    @Url(name = "setSalaire_Emp")
+    public void setsalaire(double salaire) {this.salaire = salaire;}
+    public Emp(String nom, int age,Date dtn,double salaire) {
+        this.setnom(nom);
+        this.setage(age);
+        this.setdtn(dtn);
+        this.setsalaire(salaire);
     }
     @Url(name="finEmp")
     public Emp findAll(){
@@ -42,6 +53,19 @@ public class Emp {
         
         return modelView;
     }
+    // Méthode pour sauvegarder les données du formulaire
+    @Url(name = "sprint7")
+    public ModelView save() {
+        ModelView modelView = new ModelView("save_Emp.jsp");
+        //Emp e=new Emp(nom, age, dtn, salaire)
+        // Ajoute des données sauvegardées à l'attribut "data" de ModelView
+        modelView.addItem("nom", this.getnom());
+        modelView.addItem("age", this.getage());
+        modelView.addItem("dtn", this.getdtn());
+        modelView.addItem("salaire", this.getsalaire());
+        return modelView;
+    }
+
 }
 
 
