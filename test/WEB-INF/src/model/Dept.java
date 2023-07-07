@@ -19,4 +19,29 @@ public class Dept {
         modelView.addItem("karama", karama);
         return modelView;
     }
+        @Url(name = "sprint9")
+    public ModelView saveFile(@UrlParam(name = "name") String name,
+                          @UrlParam(name = "file") UploadFile file 
+                        ){
+        ArrayList<Dept> liste=new ArrayList<Dept>(null);
+        Dept dept =new Dept(name,file);
+        liste.add(dept);
+        // Créer une instance de ModelView pour retourner les données sauvegardées
+        ModelView modelView = new ModelView("saveFile.jsp");
+        modelView.addItem
+        ("name",liste);
+        return modelView;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public UploadFile getFile() {
+        return file;
+    }
+    public void setFile(UploadFile file) {
+        this.file = file;
+    }
 }
