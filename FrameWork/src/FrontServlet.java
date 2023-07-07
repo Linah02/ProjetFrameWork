@@ -27,6 +27,18 @@ import java.util.EnumMap;
 import etu001982.framework.Modelview.ModelView;
 public class FrontServlet extends HttpServlet{
      static HashMap<String,etu001982.framework.Mapping> MappingUrls;
+     HashMap<Class<?>, Object> ClasseSingleton=new HashMap <Class<?>, Object>();
+     String packages;
+     String viewsDirectory;
+
+     public String getViewsDirectory() {
+         return viewsDirectory;
+     }
+ 
+     public void setViewsDirectory(String viewsDirectory) {
+         this.viewsDirectory = viewsDirectory;
+     }
+
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         processRequest(req,res);
     }
@@ -60,7 +72,7 @@ public class FrontServlet extends HttpServlet{
 
                 if (key.compareTo(page) == 0) {
                     Class<?> class1 = Class.forName(packages + "." + mapping.getClassName());
-                    Object object = class1.getDeclaredConstructor().newInstance();
+                    Object object = this.SingletonInstances(class1);
                 //   Method method = object.getClass().getMethod(mapping.getMethod());
                     Map<String, String[]> params = req.getParameterMap(); 
                 // maka an'ilay parametre avy any @ JSP                    
@@ -348,6 +360,71 @@ public UploadFile preparefile(String nom,HttpServletRequest request, HttpServlet
         throw new Exception("le fichier est vide");
     }
 }
+    public void getAllMappingSingleton() throws InstantiationException,IllegalAccessException,ClassNotFoundException, URISyntaxException {
+        for(Map.Entry<String,Mapping> entry:this.mappingUrls.entrySet())
+        {
+            Mapping map=entry.getValue();
+            Class<?> classes = Class.forName(packages+ "." + map.getClassName());
+                if (classes.isAnnotationPresent(scope.class)) {
+                    scope annotation = classes.getAnnotation(scope.class);
+                    boolean singleton=annotation.singleton();
+                    // Vérifier la valeur de l'annotation "name"
+                    if (singleton==true) {
+                        Object object=classes.newInstance();
+                        // Ajouter la classe et l'instance au HashMap
+                        this.ClasseSingleton.put(classes, object);
+                    }
+                }
+        }        
+        
+        }
+
+    public Object SingletonInstances(Class<?> class1) throws InstantiationException,IllegalAccessException,IllegalArgumentException,Exception{
+        for (Map.Entry<Class<?>, Object> entry : this.ClasseSingleton.entrySet()) {
+            Class<?> classe = entry.getKey();
+            Object instance = entry.getValue();
+
+                    if (class1.equals(classe)) {
+                    System.out.println(classe.getSimpleName()+"ok singleton");
+                    System.out.println(class1.getSimpleName());
+                    this.resetvaluedefault(instance);
+                    return instance;
+                    //   System.out.println("ooooooooooooooooo");
+                }
+            }
+            return class1.newInstance();
+                
+    }
+
+    public void resetvaluedefault(Object object) throws IllegalAccessException,IllegalArgumentException,Exception{
+    Field[] fields=object.getClass().getDeclaredFields();
+    for(Field field:fields)
+    {
+        if (!Modifier.isStatic(field.getModifiers())) {
+            field.setAccessible(true);
+            Class<?> fieldtype=field.getType();
+            Object valeurdefault=defaultvalue(fieldtype);
+            field.set(object,valeurdefault);
+            
+        }
+    }
+    
+    }
+
+    private Object defaultvalue(Class<?> paramType) throws Exception {
+        if (paramType == String.class) {
+            return "null";
+        } else if (paramType == int.class || paramType == Integer.class) {
+            return 0;
+        } else if (paramType == boolean.class || paramType == Boolean.class) {
+            return false;
+        }else if (paramType == double.class || paramType == Double.class) {
+            return 0.0;
+        }else {
+            return null;
+        }
+    }
+
 
 
     public static void main(String[] args) {
