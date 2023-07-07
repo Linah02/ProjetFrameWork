@@ -32,6 +32,16 @@ public class Dept {
         modelView.addItem("name",liste);
         return modelView;
     }
+    @Url("sprint10")
+    public ModelView myMethodId(@Argument("nom") String nom, @Argument("prenom") String prenom,@Argument("age") int age,@Argument("date") Date date,@Argument("lieu") String lieu,@Argument("poids") double poids,@Argument("time") Time time) {
+        String String="SaveSingleton.jsp";
+       ModelView m=new ModelView(String);
+       ArrayList<Dept> olona=new ArrayList<Dept>();
+       Dept user=new Dept(this.getnom(),this.getprenom(),this.getage(),this.getdate(),this.getlieu(),this.getpoids(),this.gettime());
+       olona.add(user);
+       m.add("val",olona);
+        return m;
+    }
     public String getName() {
         return name;
     }
