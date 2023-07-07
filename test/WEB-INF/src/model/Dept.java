@@ -3,6 +3,7 @@ import etu001982.framework.myAnnotations.Url;
 import etu001982.framework.myAnnotations.UrlParam;
 import etu001982.framework.Modelview.*;
 import java.util.Date;
+@scope(singleton=true)
 public class Dept {
     public Dept() {}
     @Url(name = "sprint8")
@@ -28,8 +29,7 @@ public class Dept {
         liste.add(dept);
         // Créer une instance de ModelView pour retourner les données sauvegardées
         ModelView modelView = new ModelView("saveFile.jsp");
-        modelView.addItem
-        ("name",liste);
+        modelView.addItem("name",liste);
         return modelView;
     }
     public String getName() {
