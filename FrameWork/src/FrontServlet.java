@@ -18,6 +18,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map.Entry;
 import etu001982.framework.myAnnotations.Url;
+import etu001982.framework.myAnnotations.Session;
+import etu001982.framework.myAnnotations.Authentification;
 import etu001982.framework.Mapping;
 import java.sql.Timestamp;
 import java.sql.Time;
@@ -30,6 +32,9 @@ public class FrontServlet extends HttpServlet{
      HashMap<Class<?>, Object> ClasseSingleton=new HashMap <Class<?>, Object>();
      String packages;
      String viewsDirectory;
+     Mapping mappingObject;
+     String isconnected;
+     String profil;
 
      public String getViewsDirectory() {
          return viewsDirectory;
@@ -72,11 +77,16 @@ public class FrontServlet extends HttpServlet{
 
                 if (key.compareTo(page) == 0) {
                     Class<?> class1 = Class.forName(packages + "." + mapping.getClassName());
+                    if (class1.getSimpleName().equals(mapping.getClassName())) {
+    
                     Object object = this.SingletonInstances(class1);
                 //   Method method = object.getClass().getMethod(mapping.getMethod());
                     Map<String, String[]> params = req.getParameterMap(); 
                 // maka an'ilay parametre avy any @ JSP                    
                     object = this.getParamForm(object, params, class1); 
+                    Method method=this.searchFonction(object, mapping.getMethod());
+                    this.checkAuthenf(req, res, method);
+
                 //recupere les attributs de la classe
                     Field[] field = object.getClass().getDeclaredFields();
                 //les transformer en tableau de string pour la comparaison
@@ -112,8 +122,13 @@ public class FrontServlet extends HttpServlet{
                                 out.print("ouiiiiiii");
                         if (arguments != null) {
                             modelView = (ModelView) method1.invoke(object, arguments);
+                            this.preapareSession(req,res, modelView);
+                            this.prepareview(req, res, modelView, method);
                         } else {
                             modelView = (ModelView) method1.invoke(object);
+                            this.preapareSession(req,res, modelView);
+                            this.prepareview(req, res, modelView, method);
+           
                         }
                 
                         //ModelView modelView = (ModelView) method.invoke(object);
@@ -143,6 +158,7 @@ public class FrontServlet extends HttpServlet{
                 }
                 
             }
+        }
             } catch (Exception e) {
                 out.print(e.getMessage());
                 e.printStackTrace();
@@ -155,13 +171,27 @@ public class FrontServlet extends HttpServlet{
     public void init() throws ServletException {
         super.init(config);
         this.packages=getServletConfig().getInitParameter("test");
+        this.isconnected=getServletConfig().getInitParameter("connected");
+        this.profil=getServletConfig().getInitParameter("profil");
+    
          //String path = "WEB-INF/classes/etu001982/framework/modele/";
          try {
              this.displayAnnot(packages);
-           
+             this.getAllMappingSingleton();
         } catch (URISyntaxException ex) {
             Logger.getLogger(FrontServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    public Method searchFonction(Object ob,String name) {
+        Method[] methods=ob.getClass().getDeclaredMethods();
+        for (int i = 0; i < methods.length; i++) {
+            if (methods[i].getName().compareTo(name)==0) {
+                return methods[i];
+            }
+            
+        }
+        return null;
+
     }
 //GET ANNOTATION
 public void displayAnnot(HashMap<String, etu001982.framework.Mapping> mapping, String path, HttpServletRequest request, HttpServletResponse response) {
