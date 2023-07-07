@@ -1,6 +1,7 @@
 package etu001982.framework.modele;
 import etu001982.framework.myAnnotations.Url;
 import etu001982.framework.myAnnotations.UrlParam;
+import etu001982.framework.myAnnotations.Authentification;
 import etu001982.framework.Modelview.*;
 import java.util.Date;
 @scope(singleton=true)

@@ -32,6 +32,14 @@
       <param-name>test</param-name>
       <param-value>etu001982.framework.modele</param-value>
     </init-param>
+    <init-param>
+            <param-name>connected</param-name>
+            <param-value>isconnected</param-value>
+        </init-param>
+            <init-param>
+            <param-name>profil</param-name>
+            <param-value>profil</param-value>
+        </init-param>
     </servlet>
 
     <servlet-mapping>
