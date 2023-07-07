@@ -40,6 +40,15 @@ import etu001982.framework.Modelview.*;
         v.addAuthenf("profil",name);
        return v;
     }
+    @Url("session")
+    public ModelView Json() {
+        String view="json.jsp";
+        ModelView v=new ModelView(view);
+        boolean  value=true;
+        String name=this.nom;
+        v.addAuthenf("session",value);
+       return v;
+    }
     
  }
  //economie memoire positif singleton
