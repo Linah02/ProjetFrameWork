@@ -300,6 +300,23 @@ public Object getParamForm(Object object, Map<String, String[]> params, Class<?>
     
     return object;
 }
+public void checkFileUpload(Object ob, HttpServletRequest request, HttpServletResponse response)throws IOException, ServletException, Exception {
+    // cet fonction vérifie si l'objet ob contient des attributs de type FileUpload et les initialise avec les fichiers téléchargés à partir de la requête HTTP.         
+    Field[] attribut = ob.getClass().getDeclaredFields();
+    Method[] fonction = ob.getClass().getDeclaredMethods();
+    for (int i = 0; i < attribut.length; i++) {
+        if (attribut[i].getType() == etu001982.framework.UploadFile.UploadFile.class) {
+            for (int j = 0; j < fonction.length; j++) {
+                if (fonction[j].getName().compareTo("set" + attribut[i].getName()) == 0) {
+                    // System.out.println("hhhhhhhhhhhhhhhh");
+                    etu001982.framework.UploadFile.UploadFile f = this.preparefile(attribut[i].getName(), request, response);
+                    fonction[j].invoke(ob, f);
+                }
+            }
+        }
+
+    }
+}
 
 public UploadFile preparefile(String nom,HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, Exception{
     etu001982.framework.UploadFile.UploadFile fichier=new etu001982.framework.UploadFile.UploadFile();
